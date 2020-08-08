@@ -55,7 +55,12 @@ export const constantRoutes = [
         // name: 'playlist',
         component: () => import('@/views/playlist/list'),
         meta: { title: '歌单', icon: 'form' }
-      }
+      },{
+          path: 'edit/:id',
+          component: () => import('@/views/playlist/edit'),
+          meta: { title: '编辑歌单', icon: 'table' },
+          hidden:true
+        }
     ]
   },
   {
