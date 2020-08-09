@@ -27,4 +27,4 @@ const scroll={
    }
 }
 
-export default scroll;
+export default scroll

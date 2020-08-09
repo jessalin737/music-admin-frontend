@@ -12,62 +12,78 @@
 
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="onEdit(scope.row)" >编辑</el-button>
-          <el-button type="danger" size="mini" @click="onDel(scope.row)" >删除</el-button>
+          <el-button size="mini" @click="onEdit(scope.row)">编辑</el-button>
+          <el-button type="danger" size="mini" @click="onDel(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-
-    <!-- <el-dialog
-        title="提示"
-        :visible.sync="delDialogVisible"
-        width="30%">
-       <span>确定删除该歌单吗？</span>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="doDel">确 定</el-button>
-        </span>
-    </el-dialog> -->
+    <el-dialog title="提示" :visible.sync="delDialogVisible" width="30%">
+      <span>确定删除该歌单吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="doDel">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList } from "@/api/playlist";
-import scroll from "@/utils/scroll"
+import { fetchList, del } from "@/api/playlist";
+import scroll from "@/utils/scroll";
 export default {
   data() {
     return {
       playlist: [],
       count: 30,
-      loading:false
+      loading: false,
+      delDialogVisible: false,
+      info: {},
     };
   },
   created() {
     this.getList();
   },
-  mounted(){
+  mounted() {
     scroll.start(this.getList);
   },
   methods: {
     getList() {
-      this.loading=true;
+      this.loading = true;
       fetchList({
         start: this.playlist.length,
         count: this.count,
       }).then((res) => {
         // console.log(res);
-        this.playlist=this.playlist.concat(res.data);
+        this.playlist = this.playlist.concat(res.data);
         //数据库数据已经取完了就停止滚动
-        if(res.data.length<this.count){
-            scroll.end();
+        if (res.data.length < this.count) {
+          scroll.end();
         }
-        this.loading=false;
+        this.loading = false;
       });
     },
-    onEdit(row){
-        this.$router.push(`playlist/edit/${row._id}`);
+    onEdit(row) {
+      this.$router.push(`playlist/edit/${row._id}`);
     },
-    onDel(){}
+    onDel(row) {
+      this.delDialogVisible = true;
+      this.info.id = row_id;
+    },
+    doDel() {
+      del({ id: this.info.id }).then((res) => {
+         this.delDialogVisible = false;
+        if(res.data.delete>0){
+          this.playlist=[];
+          this.getList();
+          this.$message({
+            message:'删除成功',
+            type:'success'
+          })
+        }else{
+          this.$message.error('删除失败');
+        }
+      });
+    },
   },
 };
 </script>

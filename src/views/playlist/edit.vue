@@ -5,7 +5,7 @@
                 <el-input v-model="playlist.name"></el-input>
             </el-form-item>>
             <el-form-item label="描述">
-                <el-input v-model="playlist.copywrite"></el-input>
+                <el-input v-model="playlist.copywriter"></el-input>
             </el-form-item>
         <el-form-item>
             <el-button type="primary" @click="onSubmit">更新</el-button>
@@ -15,7 +15,7 @@
     </div>
 </template>
 <script>
-import {fetchById} from '@/api/playlist'
+import {fetchById,update} from '@/api/playlist'
 export default {
     data(){
         return {
@@ -25,14 +25,35 @@ export default {
     created(){
        //获取歌单的id和具体信息
        fetchById({
-           id:this.$$router.params.id
+           id:this.$route.params.id
        }).then((res)=>{
-        //    console.log(res);
+        // console.log(res);
         this.playlist=res.data;
        })
-    }
+    },
+    methods: {
+        onSubmit(){
+          update(this.playlist).then((res)=>{
+              if(res.data.modified>0){
+                  this.$message({
+                      message:'更新成功',
+                      type:'success'
+                  })
+
+              }else{
+                  this.$message.error('更新失败');
+              }
+              this.$router.push('/playlist/list');
+          })
+        },
+        onCancel(){
+            this.$router.push('/playlist/list');
+        }
+    },
 }
 </script>
-<style>
+<style scoped>
+
+</style>>
 
 </style>
