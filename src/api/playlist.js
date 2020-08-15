@@ -17,11 +17,13 @@ export function fetchById(params) {
     })
 }
 
-export function update(params){
+export function update(params) {
     return request({
-        ...params,
-        url:`${baseURL}/playlist/updatePlaylist`,
-        method:'post',
+        url: `${baseURL}/playlist/updatePlaylist`,
+        data: {
+            ...params
+        },
+        method: 'post',
     })
 }
 export function del(params){

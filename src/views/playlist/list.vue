@@ -20,7 +20,7 @@
     <el-dialog title="提示" :visible.sync="delDialogVisible" width="30%">
       <span>确定删除该歌单吗？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="delDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="doDel">确 定</el-button>
       </span>
     </el-dialog>
@@ -48,31 +48,31 @@ export default {
   },
   methods: {
     getList() {
-      this.loading = true;
+      this.loading = true
       fetchList({
         start: this.playlist.length,
-        count: this.count,
-      }).then((res) => {
-        // console.log(res);
-        this.playlist = this.playlist.concat(res.data);
-        //数据库数据已经取完了就停止滚动
+        count: this.count
+      }).then(res => {
+        console.log(res)
+        this.playlist = this.playlist.concat(res.data)
+        //数据库取完数据就停止滚动
         if (res.data.length < this.count) {
-          scroll.end();
+          scroll.end()
         }
-        this.loading = false;
-      });
+        this.loading = false
+      })
     },
     onEdit(row) {
-      this.$router.push(`playlist/edit/${row._id}`);
+      this.$router.push(`/playlist/edit/${row._id}`);
     },
     onDel(row) {
       this.delDialogVisible = true;
-      this.info.id = row_id;
+      this.info.id = row._id;
     },
     doDel() {
       del({ id: this.info.id }).then((res) => {
          this.delDialogVisible = false;
-        if(res.data.delete>0){
+        if(res.data.deleted>0){
           this.playlist=[];
           this.getList();
           this.$message({
