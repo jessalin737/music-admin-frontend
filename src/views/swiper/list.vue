@@ -37,41 +37,56 @@
   </div>
 </template>
 <script>
-import {fetchList} from '@/api/swiper'
+import { fetchList,del } from "@/api/swiper";
 export default {
-    data(){
-        return{
-          swiperList:[],
-          loading:false,
-          delDialogVisible:false
-        }
+  data() {
+    return {
+      swiperList: [],
+      loading: false,
+      delDialogVisible: false,
+      swiper:{}
+    }
+  },
+  created() {
+    this.getList();
+  },
+  methods: {
+    getList() {
+      this.loading = true
+      fetchList().then(res => {
+        // console.log(res)
+        this.swiperList = res.data
+        this.loading = false
+      })
     },
-    created(){
-        this.getList()
+    uploadSuccess(res){
+      if (res.id_list.length>0) {
+        this.$message({
+          message: "上传成功",                                                                                       
+          type: "success"
+        });
+        this.getList();
+      }
     },
-    methods: {
-        getList(){
-            this.loading=true
-            fetchList().then((res)=>{
-                // console.log(res);
-                this.swiperList=res.data;
-                this.loading=false;
-            })
-        },
-        uploadSuccess(res){
-           if(res.id_list.length>0){
-               this.$message({
-                   message:'上传成功',
-                   type:success
-               })
-               this.getList()
-           }
-        },
-        onDel(){},
-        doDel(){}
+    onDel(row){
+     this.swiper=row;
+    //  console.log(this.swiper);
+    this.delDialogVisible=true;
     },
-}
+    doDel(){
+      this.loading=true;
+      del(this.swiper).then((res)=>{
+         this.loading=false;
+         this.delDialogVisible=false;
+         this.getList();
+         this.$message({
+           message:"删除成功",
+           type:"success"
+         })
+      })
+    }
+  }
+};
 </script>
 <style>
-
 </style>

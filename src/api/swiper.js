@@ -9,3 +9,11 @@ export function fetchList(params){
        
     })
 }
+
+export function del(params){
+    return request({
+        params,
+        url:`${baseURL}/swiper/del`,
+        method:'get',
+    })
+}
